@@ -1,9 +1,9 @@
 package jyamlj;
 
-public class ParsedNumber extends ParsedObject {
+public class ParsedString extends ParsedObject {
 	String data;
 
-	public ParsedNumber(String data) {
+	public ParsedString(String data) {
 		this.data = data;
 	}
 
@@ -12,7 +12,6 @@ public class ParsedNumber extends ParsedObject {
 	}
 
 	public String toString() {
-		return this.data;
+		return "\"" + this.data + "\"";
 	}
-
 }

@@ -3,7 +3,7 @@ package jyamlj;
 import java.util.ArrayList;
 
 public class JsonLexer {
-	enum State {
+	public enum State {
 		Reg, InStrLit, InNum
 	}
 
@@ -29,10 +29,10 @@ public class JsonLexer {
 		OpenBrack, CloseBrack, OpenBrace, CloseBrace, Number, String, Comma, Colon
 	}
 
-	class InvalidInputException extends Exception {
+	class InvalidLexerException extends Exception {
 		private static final long serialVersionUID = 1L;
 
-		public InvalidInputException(String message) {
+		public InvalidLexerException(String message) {
 			super(message);
 		}
 	}
@@ -49,7 +49,7 @@ public class JsonLexer {
 		tempTokenizingString = new String();
 	}
 
-	public ArrayList<TokenPair> lex() throws InvalidInputException {
+	public ArrayList<TokenPair> lex() throws InvalidLexerException {
 		Character c;
 		int line = 0, col = 0;
 		for (int i = 0; i < input.length(); i++) {
@@ -89,12 +89,12 @@ public class JsonLexer {
 					state = State.InStrLit;
 					continue;
 				default:
-					if (Character.isDigit(c)) {
+					if (Character.isDigit(c) || c == '.') {
 						state = State.InNum;
 						i -= 1; // so that we don't have to do the eating of the number here
 						continue;
 					}
-					throw new InvalidInputException("Invalid Character: '" + c + "' " + line + ":" + col);
+					throw new InvalidLexerException("Invalid Character: '" + c + "' " + line + ":" + col);
 				}
 			}
 			case InStrLit: {
@@ -108,7 +108,7 @@ public class JsonLexer {
 				continue;
 			}
 			case InNum: {
-				if (Character.isDigit(c)) {
+				if (Character.isDigit(c) || c == '.') {
 					tempTokenizingString += c;
 					continue;
 				}

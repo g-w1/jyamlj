@@ -9,13 +9,12 @@ import jyamlj.JsonLexer.TokenPair;
 
 public class App {
 
-	public static void main(String[] args) throws JsonLexer.InvalidInputException {
-		String someJson = "{\"arst\":\"bruh\",\"vlang\":[123, 456]}";
+	public static void main(String[] args) throws JsonLexer.InvalidLexerException, InvalidParserException {
+		String someJson = "{\"scotch\":\"bruh\", \"thomp\":[1,2, 3, \"moment\", {\"a\": 1.1}]    }";
+		System.out.println("input: " + someJson);
 		JsonLexer l = new JsonLexer(someJson);
 		ArrayList<TokenPair> tpl = l.lex();
-    System.out.println("input: " + someJson);
-		for (TokenPair t : tpl) {
-			System.out.println(t);
-		}
+		ParsedObject o = new ParsedObject().parse(tpl);
+		System.out.println("parsed: " + o);
 	}
 }
