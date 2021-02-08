@@ -7,8 +7,8 @@ Useful if you dont like yaml and like json.
 TODO:
 
 * [x] json lexer
-* [ ] json parser
-* [ ] json renderer
+* [x] json parser
+* [x] json renderer
 * [ ] yaml lexer
 * [ ] yaml parser
 * [ ] yaml renderer
