@@ -78,6 +78,7 @@ public class JsonLexer {
 					continue;
 				case ']':
 					tokens.add(new TokenPair(TokenType.CloseBrack, null));
+					continue;
 				case ',':
 					tokens.add(new TokenPair(TokenType.Comma, null));
 					continue;
