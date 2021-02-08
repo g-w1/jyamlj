@@ -10,28 +10,28 @@ public class ParsedObject {
 	public ParsedObject() {
 	}
 
-	public ParsedObject parse(final List<TokenPair> input) throws InvalidParserException {
+	public ParsedObject parseJson(final List<TokenPair> input) throws InvalidParserExceptionJson {
 		IntWrap i = new IntWrap(0);
 		TokenPair t;
 		t = input.get(i.value);
 		switch (t.token) {
 		case OpenBrace:
-			return new ParsedMap().parse(input, i);
+			return new ParsedMap().parseJson(input, i);
 		case OpenBrack:
-			return new ParsedArray().parse(input, i);
+			return new ParsedArray().parseJson(input, i);
 		default:
-			throw new InvalidParserException("Expected { [ , found " + t);
+			throw new InvalidParserExceptionJson("Expected { [ , found " + t);
 		}
 	}
 
-	public ParsedObject parse(final List<TokenPair> input, IntWrap i) throws InvalidParserException {
+	public ParsedObject parseJson(final List<TokenPair> input, IntWrap i) throws InvalidParserExceptionJson {
 		TokenPair t;
 		t = input.get(i.value);
 		switch (t.token) {
 		case OpenBrace:
-			return new ParsedMap().parse(input, i);
+			return new ParsedMap().parseJson(input, i);
 		case OpenBrack:
-			return new ParsedArray().parse(input, i);
+			return new ParsedArray().parseJson(input, i);
 		case Number:
 			i.value++;
 			return new ParsedNumber(t.data).parse();
@@ -39,57 +39,57 @@ public class ParsedObject {
 			i.value++;
 			return new ParsedString(t.data).parse();
 		default:
-			throw new InvalidParserException("Expected { [ Number or String, found " + t);
+			throw new InvalidParserExceptionJson("Expected { [ Number or String, found " + t);
 		}
 	}
 
-	public static void expect(final List<TokenPair> input, IntWrap i, TokenType t) throws InvalidParserException {
+	public static void expectJson(final List<TokenPair> input, IntWrap i, TokenType t) throws InvalidParserExceptionJson {
 		TokenType gotten;
 		try {
 			gotten = input.get(i.value).token;
 		} catch (IndexOutOfBoundsException e) {
-			throw new InvalidParserException("A paren or bracket is not balenced");
+			throw new InvalidParserExceptionJson("A paren or bracket is not balenced");
 		}
 		if (gotten != t) {
-			throw new InvalidParserException(t, gotten);
+			throw new InvalidParserExceptionJson(t, gotten);
 		}
 		i.value++;
 	}
 
-	public static String expectData(final List<TokenPair> input, IntWrap i, TokenType t) throws InvalidParserException {
+	public static String expectDataJson(final List<TokenPair> input, IntWrap i, TokenType t) throws InvalidParserExceptionJson {
 		TokenPair gotten;
 		try {
 			gotten = input.get(i.value);
 		} catch (IndexOutOfBoundsException e) {
-			throw new InvalidParserException("A paren or bracket is not balenced");
+			throw new InvalidParserExceptionJson("A paren or bracket is not balenced");
 		}
 		if (gotten.token != t) {
-			throw new InvalidParserException(t, gotten.token);
+			throw new InvalidParserExceptionJson(t, gotten.token);
 		}
 		i.value++;
 		return gotten.data;
 	}
 
-	public static Boolean peek(final List<TokenPair> input, IntWrap i, TokenType t) throws InvalidParserException {
+	public static Boolean peekJson(final List<TokenPair> input, IntWrap i, TokenType t) throws InvalidParserExceptionJson {
 		TokenPair gotten;
 		try {
 			gotten = input.get(i.value);
 		} catch (IndexOutOfBoundsException e) {
-			throw new InvalidParserException("A paren or bracket is not balenced");
+			throw new InvalidParserExceptionJson("A paren or bracket is not balenced");
 		}
 		return gotten.token == t;
 	}
 
 }
 
-class InvalidParserException extends Exception {
+class InvalidParserExceptionJson extends Exception {
 	private static final long serialVersionUID = 1L;
 
-	public InvalidParserException(TokenType expected, TokenType found) {
+	public InvalidParserExceptionJson(TokenType expected, TokenType found) {
 		super("Expected: " + expected + ", found: " + found);
 	}
 
-	public InvalidParserException(String s) {
+	public InvalidParserExceptionJson(String s) {
 		super(s);
 	}
 }

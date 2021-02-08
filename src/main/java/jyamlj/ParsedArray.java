@@ -10,20 +10,20 @@ public class ParsedArray extends ParsedObject {
 
 	public List<ParsedObject> arr;
 
-	public ParsedObject parse(final List<TokenPair> input, IntWrap i) throws InvalidParserException {
+	public ParsedObject parseJson(final List<TokenPair> input, IntWrap i) throws InvalidParserExceptionJson {
 		arr = new ArrayList<ParsedObject>();
-		expect(input, i, TokenType.OpenBrack);
-		if (peek(input, i, TokenType.CloseBrack)) {
+		expectJson(input, i, TokenType.OpenBrack);
+		if (peekJson(input, i, TokenType.CloseBrack)) {
 			i.value++;
 			return this;
 		}
 		while (input.get(i.value).token != TokenType.CloseBrack) {
-			ParsedObject val = new ParsedObject().parse(input, i);
+			ParsedObject val = new ParsedObject().parseJson(input, i);
 			arr.add(val);
-			if (peek(input, i, TokenType.Comma)) {
+			if (peekJson(input, i, TokenType.Comma)) {
 				i.value++;
 			} else {
-				expect(input, i, TokenType.CloseBrack);
+				expectJson(input, i, TokenType.CloseBrack);
 				return this;
 			}
 		}

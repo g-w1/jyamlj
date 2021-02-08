@@ -19,22 +19,22 @@ public class ParsedMap extends ParsedObject {
 
 	public List<MapPair> map;
 
-	public ParsedObject parse(final List<TokenPair> input, IntWrap i) throws InvalidParserException {
+	public ParsedObject parseJson(final List<TokenPair> input, IntWrap i) throws InvalidParserExceptionJson {
 		map = new ArrayList<MapPair>();
-		expect(input, i, TokenType.OpenBrace);
-		if (peek(input, i, TokenType.CloseBrace)) {
+		expectJson(input, i, TokenType.OpenBrace);
+		if (peekJson(input, i, TokenType.CloseBrace)) {
 			i.value++;
 			return this;
 		}
 		while (input.get(i.value).token != TokenType.CloseBrace) {
-			String key = expectData(input, i, TokenType.String);
-			expect(input, i, TokenType.Colon);
-			ParsedObject val = new ParsedObject().parse(input, i);
+			String key = expectDataJson(input, i, TokenType.String);
+			expectJson(input, i, TokenType.Colon);
+			ParsedObject val = new ParsedObject().parseJson(input, i);
 			map.add(new MapPair(key, val));
-			if (peek(input, i, TokenType.Comma)) {
+			if (peekJson(input, i, TokenType.Comma)) {
 				i.value++;
 			} else {
-				expect(input, i, TokenType.CloseBrace);
+				expectJson(input, i, TokenType.CloseBrace);
 				return this;
 			}
 		}
