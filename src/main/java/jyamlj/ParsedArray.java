@@ -18,7 +18,7 @@ public class ParsedArray extends ParsedObject {
 			return this;
 		}
 		while (input.get(i.value).token != TokenType.CloseBrack) {
-			ParsedObject val = new ParsedObject().parseJson(input, i);
+			ParsedObject val = ParsedObject.parseJsonCont(input, i);
 			arr.add(val);
 			if (peekJson(input, i, TokenType.Comma)) {
 				i.value++;
@@ -30,10 +30,11 @@ public class ParsedArray extends ParsedObject {
 		return this;
 	}
 
-	public String toString() {
+	// TODO use i
+	public String toJsonString(int i) {
 		String s = "[";
-		for (int i = 0; i < arr.size(); i++) {
-			s += " " + arr.get(i) + ((i == arr.size() - 1) ? " " : ",");
+		for (int j = 0; j < arr.size(); j++) {
+			s += " " + arr.get(j).toJsonString(i+1) + ((j == arr.size() - 1) ? " " : ",");
 		}
 		s += "]";
 		return s;

@@ -5,12 +5,9 @@ import java.util.List;
 import jyamlj.JsonLexer.TokenPair;
 import jyamlj.JsonLexer.TokenType;
 
-public class ParsedObject {
+public abstract class ParsedObject {
 
-	public ParsedObject() {
-	}
-
-	public ParsedObject parseJson(final List<TokenPair> input) throws InvalidParserExceptionJson {
+	public static ParsedObject parseJsonRoot(final List<TokenPair> input) throws InvalidParserExceptionJson {
 		IntWrap i = new IntWrap(0);
 		TokenPair t;
 		t = input.get(i.value);
@@ -20,11 +17,11 @@ public class ParsedObject {
 		case OpenBrack:
 			return new ParsedArray().parseJson(input, i);
 		default:
-			throw new InvalidParserExceptionJson("Expected { [ , found " + t);
+			throw new InvalidParserExceptionJson("Expected '{' '[' , found " + t);
 		}
 	}
 
-	public ParsedObject parseJson(final List<TokenPair> input, IntWrap i) throws InvalidParserExceptionJson {
+	public static ParsedObject parseJsonCont(final List<TokenPair> input, IntWrap i) throws InvalidParserExceptionJson {
 		TokenPair t;
 		t = input.get(i.value);
 		switch (t.token) {
@@ -39,7 +36,7 @@ public class ParsedObject {
 			i.value++;
 			return new ParsedString(t.data).parse();
 		default:
-			throw new InvalidParserExceptionJson("Expected { [ Number or String, found " + t);
+			throw new InvalidParserExceptionJson("Expected '{' '[' Number or String, found " + t);
 		}
 	}
 
@@ -80,6 +77,16 @@ public class ParsedObject {
 		return gotten.token == t;
 	}
 
+	public String toJsonString(int i) {
+    	return null;
+	}
+
+	public String toString(boolean isJson) {
+    	if (isJson)
+        	return this.toJsonString(0);
+    	else
+        	return null;
+	}
 }
 
 class InvalidParserExceptionJson extends Exception {

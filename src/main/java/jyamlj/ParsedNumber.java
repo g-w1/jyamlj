@@ -11,7 +11,7 @@ public class ParsedNumber extends ParsedObject {
 		return this;
 	}
 
-	public String toString() {
+	public String toJsonString(int i) {
 		return this.data;
 	}
 
