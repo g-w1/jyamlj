@@ -8,6 +8,10 @@ import jyamlj.JsonLexer.TokenType;
 
 public class ParsedArray extends ParsedObject {
 
+	public ParsedArray(int indentLevel) {
+		super(indentLevel);
+	}
+
 	public List<ParsedObject> arr;
 
 	public ParsedObject parseJson(final List<TokenPair> input, IntWrap i) throws InvalidParserExceptionJson {
@@ -18,25 +22,23 @@ public class ParsedArray extends ParsedObject {
 			return this;
 		}
 		while (input.get(i.value).token != TokenType.CloseBrack) {
-			ParsedObject val = ParsedObject.parseJsonCont(input, i);
+			ParsedObject val = parseJsonCont(input, i);
 			arr.add(val);
-			if (peekJson(input, i, TokenType.Comma)) {
-				i.value++;
-			} else {
+			if (peekJson(input, i, TokenType.CloseBrack)) {
 				expectJson(input, i, TokenType.CloseBrack);
 				return this;
 			}
+			expectJson(input, i, TokenType.Comma);
 		}
 		return this;
 	}
 
-	// TODO use i
-	public String toJsonString(int i) {
-		String s = "[";
+	public String toJsonString() {
+		String s = "[\n";
 		for (int j = 0; j < arr.size(); j++) {
-			s += " " + arr.get(j).toJsonString(i+1) + ((j == arr.size() - 1) ? " " : ",");
+			s += indent(arr.get(j).toJsonString()) + ((j == arr.size() - 1) ? "\n" : ",\n");
 		}
-		s += "]";
+		s += mindent("]");
 		return s;
 	}
 }

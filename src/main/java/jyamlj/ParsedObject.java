@@ -7,40 +7,67 @@ import jyamlj.JsonLexer.TokenType;
 
 public abstract class ParsedObject {
 
-	public static ParsedObject parseJsonRoot(final List<TokenPair> input) throws InvalidParserExceptionJson {
+	private int indentLevel;
+
+	public abstract String toJsonString();
+
+	public ParsedObject(int indentLevel) {
+		this.indentLevel = indentLevel;
+	}
+
+	protected String indent(String s) {
+		String r = "";
+		for (int i = 0; i < indentLevel + 1; i++) {
+			r += "	";
+		}
+		r += s;
+		return r;
+	}
+
+	protected String mindent(String s) {
+		String r = "";
+		for (int i = 0; i < indentLevel; i++) {
+			r += "	";
+		}
+		r += s;
+		return r;
+	}
+
+	protected static ParsedObject parseJsonRoot(final List<TokenPair> input) throws InvalidParserExceptionJson {
 		IntWrap i = new IntWrap(0);
 		TokenPair t;
 		t = input.get(i.value);
 		switch (t.token) {
 		case OpenBrace:
-			return new ParsedMap().parseJson(input, i);
+			return new ParsedMap(0).parseJson(input, i);
 		case OpenBrack:
-			return new ParsedArray().parseJson(input, i);
+			return new ParsedArray(0).parseJson(input, i);
 		default:
 			throw new InvalidParserExceptionJson("Expected '{' '[' , found " + t);
 		}
 	}
 
-	public static ParsedObject parseJsonCont(final List<TokenPair> input, IntWrap i) throws InvalidParserExceptionJson {
+	protected ParsedObject parseJsonCont(final List<TokenPair> input, IntWrap i) throws InvalidParserExceptionJson {
 		TokenPair t;
 		t = input.get(i.value);
 		switch (t.token) {
 		case OpenBrace:
-			return new ParsedMap().parseJson(input, i);
+			return new ParsedMap(indentLevel + 1).parseJson(input, i);
 		case OpenBrack:
-			return new ParsedArray().parseJson(input, i);
+			return new ParsedArray(indentLevel + 1).parseJson(input, i);
 		case Number:
 			i.value++;
-			return new ParsedNumber(t.data).parse();
+			return new ParsedNumber(t.data, indentLevel);
 		case String:
 			i.value++;
-			return new ParsedString(t.data).parse();
+			return new ParsedString(t.data, indentLevel);
 		default:
 			throw new InvalidParserExceptionJson("Expected '{' '[' Number or String, found " + t);
 		}
 	}
 
-	public static void expectJson(final List<TokenPair> input, IntWrap i, TokenType t) throws InvalidParserExceptionJson {
+	public static void expectJson(final List<TokenPair> input, IntWrap i, TokenType t)
+			throws InvalidParserExceptionJson {
 		TokenType gotten;
 		try {
 			gotten = input.get(i.value).token;
@@ -53,7 +80,8 @@ public abstract class ParsedObject {
 		i.value++;
 	}
 
-	public static String expectDataJson(final List<TokenPair> input, IntWrap i, TokenType t) throws InvalidParserExceptionJson {
+	protected static String expectDataJson(final List<TokenPair> input, IntWrap i, TokenType t)
+			throws InvalidParserExceptionJson {
 		TokenPair gotten;
 		try {
 			gotten = input.get(i.value);
@@ -67,7 +95,8 @@ public abstract class ParsedObject {
 		return gotten.data;
 	}
 
-	public static Boolean peekJson(final List<TokenPair> input, IntWrap i, TokenType t) throws InvalidParserExceptionJson {
+	protected static Boolean peekJson(final List<TokenPair> input, IntWrap i, TokenType t)
+			throws InvalidParserExceptionJson {
 		TokenPair gotten;
 		try {
 			gotten = input.get(i.value);
@@ -77,15 +106,11 @@ public abstract class ParsedObject {
 		return gotten.token == t;
 	}
 
-	public String toJsonString(int i) {
-    	return null;
-	}
-
 	public String toString(boolean isJson) {
-    	if (isJson)
-        	return this.toJsonString(0);
-    	else
-        	return null;
+		if (isJson)
+			return this.toJsonString();
+		else
+			return null;
 	}
 }
 

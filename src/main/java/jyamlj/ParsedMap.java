@@ -7,6 +7,10 @@ import jyamlj.JsonLexer.TokenPair;
 import jyamlj.JsonLexer.TokenType;
 
 public class ParsedMap extends ParsedObject {
+	public ParsedMap(int indentLevel) {
+		super(indentLevel);
+	}
+
 	class MapPair {
 		public String key;
 		public ParsedObject val;
@@ -29,24 +33,25 @@ public class ParsedMap extends ParsedObject {
 		while (input.get(i.value).token != TokenType.CloseBrace) {
 			String key = expectDataJson(input, i, TokenType.String);
 			expectJson(input, i, TokenType.Colon);
-			ParsedObject val = ParsedObject.parseJsonCont(input, i);
+			ParsedObject val = parseJsonCont(input, i);
 			map.add(new MapPair(key, val));
-			if (peekJson(input, i, TokenType.Comma)) {
-				i.value++;
-			} else {
+			if (peekJson(input, i, TokenType.CloseBrace)) {
 				expectJson(input, i, TokenType.CloseBrace);
 				return this;
 			}
+			expectJson(input, i, TokenType.Comma);
 		}
 		return this;
 	}
 
-	public String toJsonString(int i) {
-		String s = "{";
+	public String toJsonString() {
+		String s = "{\n";
 		for (int j = 0; j < map.size(); j++) {
-			s += " \"" + map.get(j).key + "\" : " + map.get(j).val.toJsonString(j + 1) + ((j == map.size() - 1) ? " " : " ,");
+			s += indent("\"");
+			s += map.get(j).key + "\": " + map.get(j).val.toJsonString();
+			s += ((j == map.size() - 1) ? "" : ",") + "\n";
 		}
-		s += "}";
+		s += mindent("}");
 		return s;
 	}
 }

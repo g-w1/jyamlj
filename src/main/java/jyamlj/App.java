@@ -10,11 +10,11 @@ import jyamlj.JsonLexer.TokenPair;
 public class App {
 
 	public static void main(String[] args) throws JsonLexer.InvalidLexerException, InvalidParserExceptionJson {
-		String someJson = "{\"jeff\":\"test\", \"jacob\":[1,2, 3, \"hi\", {\"a\": 1.1}]    ,}";
+		String someJson = "{\"jeff\":\"test\", \"jacob\":[1,2, 3, \"hi\", {\"a\": 1.1}], \"d\":{\"c\":1}}";
 		System.out.println("input: " + someJson);
 		JsonLexer l = new JsonLexer(someJson);
 		ArrayList<TokenPair> tpl = l.lex();
 		ParsedObject o = ParsedObject.parseJsonRoot(tpl);
-		System.out.println("parsed: " + o.toString(true));
+		System.out.println(o.toString(true));
 	}
 }
