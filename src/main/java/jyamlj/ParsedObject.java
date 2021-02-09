@@ -39,9 +39,9 @@ public abstract class ParsedObject {
 		t = input.get(i.value);
 		switch (t.token) {
 		case OpenBrace:
-			return new ParsedMap(0).parseJson(input, i);
+			return new ParsedMap(0, input, i);
 		case OpenBrack:
-			return new ParsedArray(0).parseJson(input, i);
+			return new ParsedArray(0, input, i);
 		default:
 			throw new InvalidParserExceptionJson("Expected '{' '[' , found " + t);
 		}
@@ -52,15 +52,15 @@ public abstract class ParsedObject {
 		t = input.get(i.value);
 		switch (t.token) {
 		case OpenBrace:
-			return new ParsedMap(indentLevel + 1).parseJson(input, i);
+			return new ParsedMap(indentLevel + 1, input, i);
 		case OpenBrack:
-			return new ParsedArray(indentLevel + 1).parseJson(input, i);
+			return new ParsedArray(indentLevel + 1, input, i);
 		case Number:
 			i.value++;
-			return new ParsedNumber(t.data, indentLevel);
+			return new ParsedNumber(t.data, indentLevel + 1);
 		case String:
 			i.value++;
-			return new ParsedString(t.data, indentLevel);
+			return new ParsedString(t.data, indentLevel + 1);
 		default:
 			throw new InvalidParserExceptionJson("Expected '{' '[' Number or String, found " + t);
 		}
