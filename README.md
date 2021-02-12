@@ -11,5 +11,6 @@ TODO:
 * [x] json renderer
 * [ ] yaml lexer
 * [ ] yaml parser
-* [ ] yaml renderer
+* [x] yaml renderer
+* [ ] tests
 * [ ] publish!
