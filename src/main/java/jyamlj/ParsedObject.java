@@ -11,6 +11,10 @@ public abstract class ParsedObject {
 
 	public abstract String toJsonString();
 
+	public abstract String toYamlString();
+
+	protected abstract boolean isYamlMultiline();
+
 	public ParsedObject(int indentLevel) {
 		this.indentLevel = indentLevel;
 	}
@@ -109,9 +113,13 @@ public abstract class ParsedObject {
 	public String toString(boolean isJson) {
 		if (isJson)
 			return this.toJsonString();
-		else
-			return null;
+		else {
+			String s = "---\n";
+			s += this.toYamlString();
+			return s;
+		}
 	}
+
 }
 
 class InvalidParserExceptionJson extends Exception {

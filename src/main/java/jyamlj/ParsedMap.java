@@ -50,4 +50,36 @@ public class ParsedMap extends ParsedObject {
 		s += mindent("}");
 		return s;
 	}
+
+	public String toYamlString() {
+		if (map.size() == 0)
+			return "{}";
+		if (map.size() == 1) {
+			MapPair kv = map.get(0);
+			return kv.key + ": " + kv.val.toYamlString() + "\n";
+		}
+		String l = new String();
+		for (int j = 0; j < map.size(); j++) {
+			MapPair mp = map.get(j);
+			ParsedObject o = mp.val;
+			l += mindent(mp.key);
+			l += ": ";
+			if (o.isYamlMultiline()) {
+				l += "\n";
+			}
+			l += o.toYamlString();
+			if (!(j == map.size() - 1))
+				l += "\n";
+		}
+		return l;
+	}
+
+	public boolean isYamlMultiline() {
+		if (map.size() == 0)
+			return false;
+		if (map.size() == 1)
+			return map.get(0).val.isYamlMultiline();
+		return true;
+	}
+
 }

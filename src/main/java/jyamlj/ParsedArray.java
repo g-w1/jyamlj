@@ -38,4 +38,27 @@ public class ParsedArray extends ParsedObject {
 		s += mindent("]");
 		return s;
 	}
+
+	public String toYamlString() {
+		if (arr.size() == 0)
+			return "[]";
+		String l = new String();
+		for (int j = 0; j < arr.size(); j++) {
+			ParsedObject o = arr.get(j);
+			l += mindent("- ");
+			if (o.isYamlMultiline())
+				l += "\n";
+			l += o.toYamlString();
+			if (!(j == arr.size() - 1))
+				l += "\n";
+		}
+		return l;
+	}
+
+	public boolean isYamlMultiline() {
+		if (arr.size() == 0)
+			return false;
+
+		return true;
+	}
 }

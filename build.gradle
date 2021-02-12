@@ -22,7 +22,7 @@ repositories {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'jyamlj.App'
+        attributes 'Main-Class': 'jyamlj.Main'
     }
 }
 
@@ -36,5 +36,5 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClassName = 'jyamlj.App'
+    mainClassName = 'jyamlj.Main'
 }

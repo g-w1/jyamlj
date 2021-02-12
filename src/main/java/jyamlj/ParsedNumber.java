@@ -12,4 +12,12 @@ public class ParsedNumber extends ParsedObject {
 		return this.data;
 	}
 
+	public String toYamlString() {
+		return this.data;
+	}
+
+	protected boolean isYamlMultiline() {
+		return false;
+	}
+
 }

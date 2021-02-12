@@ -11,4 +11,12 @@ public class ParsedString extends ParsedObject {
 	public String toJsonString() {
 		return "\"" + this.data + "\"";
 	}
+
+	public String toYamlString() {
+		return this.data;
+	}
+
+	protected boolean isYamlMultiline() {
+		return false;
+	}
 }
