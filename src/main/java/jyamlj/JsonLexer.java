@@ -29,36 +29,24 @@ public class JsonLexer {
 		OpenBrack, CloseBrack, OpenBrace, CloseBrace, Number, String, Comma, Colon
 	}
 
-	class InvalidLexerException extends Exception {
-		private static final long serialVersionUID = 1L;
-
-		public InvalidLexerException(String message) {
-			super(message);
-		}
-	}
-
-	private ArrayList<TokenPair> tokens;
-	private State state;
 	private String tempTokenizingString;
-	private String input;
 
-	public JsonLexer(String input) {
-		this.input = input;
-		tokens = new ArrayList<TokenPair>();
-		state = State.Reg;
+	public JsonLexer() {
 		tempTokenizingString = new String();
 	}
 
-	public ArrayList<TokenPair> lex() throws InvalidLexerException {
+	public ArrayList<TokenPair> lex(String input) throws InvalidLexerException {
+		ArrayList<TokenPair> tokens = new ArrayList<TokenPair>();
+		State state = State.Reg;
 		Character c;
 		int line = 0, col = 0;
 		for (int i = 0; i < input.length(); i++) {
 			c = input.charAt(i);
-			col++;
 			if (c == '\n') {
 				line++;
 				col = 0;
 			}
+			col++;
 			switch (state) {
 			case Reg: {
 				switch (c) {

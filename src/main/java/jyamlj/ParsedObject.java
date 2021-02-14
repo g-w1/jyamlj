@@ -22,7 +22,7 @@ public abstract class ParsedObject {
 	protected String indent(String s) {
 		String r = "";
 		for (int i = 0; i < indentLevel + 1; i++) {
-			r += "	";
+			r += "\t";
 		}
 		r += s;
 		return r;
@@ -31,7 +31,7 @@ public abstract class ParsedObject {
 	protected String mindent(String s) {
 		String r = "";
 		for (int i = 0; i < indentLevel; i++) {
-			r += "	";
+			r += "\t";
 		}
 		r += s;
 		return r;
@@ -114,9 +114,7 @@ public abstract class ParsedObject {
 		if (isJson)
 			return this.toJsonString();
 		else {
-			String s = "---\n";
-			s += this.toYamlString();
-			return s;
+			return this.toYamlString();
 		}
 	}
 

@@ -9,7 +9,7 @@ TODO:
 * [x] json lexer
 * [x] json parser
 * [x] json renderer
-* [ ] yaml lexer
+* [x] yaml lexer
 * [ ] yaml parser
 * [x] yaml renderer
 * [ ] tests
