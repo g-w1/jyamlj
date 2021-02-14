@@ -3,11 +3,78 @@
  */
 package jyamlj;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.util.ArrayList;
+
 import org.junit.Test;
-//import static org.junit.Assert.*;
+
+import jyamlj.JsonLexer.TokenPair;
 
 public class AppTest {
 	@Test
-	public void testAppHasAGreeting() {
+	public void testJsonFormatting() {
+		// @formatter:off
+		try {
+			assertJsonFormat(
+					"[{\"jeff\":\"test\", \"jacob\":[1,2, 3, {\"a\": 1.1, \"b\":5}, [1,2,3]], \"thing\":[1,5.1,[{}]]}]",
+"[\n" + 
+"	{\n" + 
+"		\"jeff\": \"test\",\n" + 
+"		\"jacob\": [\n" + 
+"			1,\n" + 
+"			2,\n" + 
+"			3,\n" + 
+"			{\n" + 
+"				\"a\": 1.1,\n" + 
+"				\"b\": 5\n" + 
+"			},\n" + 
+"			[\n" + 
+"				1,\n" + 
+"				2,\n" + 
+"				3\n" + 
+"			]\n" + 
+"		],\n" + 
+"		\"thing\": [\n" + 
+"			1,\n" + 
+"			5.1,\n" + 
+"			[\n" + 
+"				{\n" + 
+"				}\n" + 
+"			]\n" + 
+"		]\n" + 
+"	}\n" + 
+"]");
+			assertReflectiveJsonFormat("{ \"a\": {\"b\": 2}}");
+			
+			// @formatter:on
+		} catch (InvalidLexerException | InvalidParserExceptionJson e) {
+			fail("WE HAVE AN ERROR: " + e);
+		}
 	}
+
+	private void assertJsonFormat(String input, String expectedOutput)
+			throws InvalidLexerException, InvalidParserExceptionJson {
+		JsonLexer lexer = new JsonLexer();
+		ArrayList<TokenPair> ts = lexer.lex(input);
+		ParsedObject o = ParsedObject.parseJsonRoot(ts);
+		String output = o.toString(true);
+		assertEquals(output, expectedOutput);
+	}
+
+	private void assertReflectiveJsonFormat(String inputString)
+			throws InvalidLexerException, InvalidParserExceptionJson {
+		JsonLexer lexer = new JsonLexer();
+		ArrayList<TokenPair> ts = lexer.lex(inputString);
+		ParsedObject o1 = ParsedObject.parseJsonRoot(ts);
+		String output1 = o1.toString(true);
+		lexer = new JsonLexer();
+		ts = lexer.lex(output1);
+		ParsedObject o2 = ParsedObject.parseJsonRoot(ts);
+		String output2 = o2.toString(true);
+		assertEquals(output1, output2);
+
+	}
+
 }
