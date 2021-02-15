@@ -7,7 +7,7 @@ public class YamlLexer {
 		ArrayElem, MapElem
 	}
 
-	enum TokenType {
+	enum YamlTokenType {
 		Ident, Num, Colon, Dash, // TODO maybe include JsonTokens in this for using json in yaml
 	}
 
@@ -15,11 +15,11 @@ public class YamlLexer {
 		Reg, InIdent, InNum
 	}
 
-	class TokenPair {
+	class YamlTokenPair {
 		String data;
-		TokenType token;
+		YamlTokenType token;
 
-		public TokenPair(TokenType t, String s) {
+		public YamlTokenPair(YamlTokenType t, String s) {
 			token = t;
 			data = s;
 		}
@@ -37,21 +37,22 @@ public class YamlLexer {
 
 	class TokenizedLine {
 		public int indent;
-		public ArrayList<TokenPair> tokens;
+		public ArrayList<YamlTokenPair> tokens;
 
-		public TokenizedLine(int i, ArrayList<TokenPair> line) {
+		public TokenizedLine(int i, ArrayList<YamlTokenPair> line) {
 			indent = i;
 			tokens = line;
 		}
 
 		public String toString() {
 			String s = "line(" + indent + "): ";
-			for (TokenPair t : tokens) {
+			for (YamlTokenPair t : tokens) {
 				s += t;
 			}
 			s += "\n";
 			return s;
 		}
+
 	}
 
 	private String tempTokenizingString;
@@ -68,8 +69,8 @@ public class YamlLexer {
 		int indentLevel = 0;
 		boolean sawCharOnThisLine;
 		sawCharOnThisLine = false;
-		ArrayList<TokenPair> line;
-		line = new ArrayList<TokenPair>();
+		ArrayList<YamlTokenPair> line;
+		line = new ArrayList<YamlTokenPair>();
 		for (int i = 0; i < input.length(); i++) {
 			c = input.charAt(i);
 			// TODO validate mixing of tabs and spaces
@@ -89,7 +90,7 @@ public class YamlLexer {
 						sawCharOnThisLine = true;
 				if (c == '\n') {
 					lines.add(new TokenizedLine(indentLevel, line));
-					line = new ArrayList<TokenPair>();
+					line = new ArrayList<YamlTokenPair>();
 					col = 0;
 					sawCharOnThisLine = false;
 					indentLevel = 0;
@@ -101,10 +102,10 @@ public class YamlLexer {
 				case '\t':
 					continue;
 				case ':':
-					line.add(new TokenPair(TokenType.Colon, null));
+					line.add(new YamlTokenPair(YamlTokenType.Colon, null));
 					continue;
 				case '-':
-					line.add(new TokenPair(TokenType.Dash, null));
+					line.add(new YamlTokenPair(YamlTokenType.Dash, null));
 					continue;
 				default:
 					if (Character.isDigit(c) || c == '.') {
@@ -127,7 +128,7 @@ public class YamlLexer {
 				}
 				i -= 1;
 				state = State.Reg;
-				line.add(new TokenPair(TokenType.Num, tempTokenizingString));
+				line.add(new YamlTokenPair(YamlTokenType.Num, tempTokenizingString));
 				tempTokenizingString = new String();
 				continue;
 			}
@@ -138,7 +139,7 @@ public class YamlLexer {
 				}
 				i -= 1;
 				state = State.Reg;
-				line.add(new TokenPair(TokenType.Ident, tempTokenizingString));
+				line.add(new YamlTokenPair(YamlTokenType.Ident, tempTokenizingString));
 				tempTokenizingString = new String();
 				continue;
 			}
@@ -148,10 +149,10 @@ public class YamlLexer {
 		case Reg:
 			break;
 		case InNum:
-			line.add(new TokenPair(TokenType.Num, tempTokenizingString));
+			line.add(new YamlTokenPair(YamlTokenType.Num, tempTokenizingString));
 			break;
 		case InIdent:
-			line.add(new TokenPair(TokenType.Ident, tempTokenizingString));
+			line.add(new YamlTokenPair(YamlTokenType.Ident, tempTokenizingString));
 			break;
 		}
 		if (line.size() != 0) {

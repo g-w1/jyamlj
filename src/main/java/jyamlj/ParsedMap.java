@@ -3,29 +3,41 @@ package jyamlj;
 import java.util.ArrayList;
 import java.util.List;
 
-import jyamlj.JsonLexer.TokenPair;
-import jyamlj.JsonLexer.TokenType;
+import jyamlj.JsonLexer.JsonTokenPair;
+import jyamlj.JsonLexer.JsonTokenType;
+import jyamlj.YamlLexer.TokenizedLine;
 
 public class ParsedMap extends ParsedObject {
-	public ParsedMap(int indentLevel, List<TokenPair> input, IntWrap i) throws InvalidParserExceptionJson {
+
+	public ParsedMap() {
+		super(0);
+		map = new ArrayList<MapPair>();
+	}
+
+	public ParsedMap(int indentLevel, List<JsonTokenPair> input, IntWrap i) throws InvalidParserExceptionJson {
 		super(indentLevel);
 		map = new ArrayList<MapPair>();
-		expectJson(input, i, TokenType.OpenBrace);
-		if (peekJson(input, i, TokenType.CloseBrace)) {
+		expectJson(input, i, JsonTokenType.OpenBrace);
+		if (peekJson(input, i, JsonTokenType.CloseBrace)) {
 			i.value++;
 			return;
 		}
-		while (input.get(i.value).token != TokenType.CloseBrace) {
-			String key = expectDataJson(input, i, TokenType.String);
-			expectJson(input, i, TokenType.Colon);
+		while (input.get(i.value).token != JsonTokenType.CloseBrace) {
+			String key = expectDataJson(input, i, JsonTokenType.String);
+			expectJson(input, i, JsonTokenType.Colon);
 			ParsedObject val = parseJsonCont(input, i);
 			map.add(new MapPair(key, val));
-			if (peekJson(input, i, TokenType.CloseBrace)) {
-				expectJson(input, i, TokenType.CloseBrace);
+			if (peekJson(input, i, JsonTokenType.CloseBrace)) {
+				expectJson(input, i, JsonTokenType.CloseBrace);
 				return;
 			}
-			expectJson(input, i, TokenType.Comma);
+			expectJson(input, i, JsonTokenType.Comma);
 		}
+	}
+
+	public ParsedMap(int indentLevel, /* TODO kinda hack but who cares XD */ ArrayList<TokenizedLine> input, IntWrap i)
+			throws InvalidParserExceptionJson {
+		super(indentLevel);
 	}
 
 	class MapPair {
@@ -36,6 +48,7 @@ public class ParsedMap extends ParsedObject {
 			this.key = key;
 			this.val = val;
 		}
+
 	}
 
 	public List<MapPair> map;

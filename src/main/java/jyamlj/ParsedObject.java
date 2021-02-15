@@ -1,9 +1,13 @@
 package jyamlj;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import jyamlj.JsonLexer.TokenPair;
-import jyamlj.JsonLexer.TokenType;
+import jyamlj.JsonLexer.JsonTokenPair;
+import jyamlj.JsonLexer.JsonTokenType;
+import jyamlj.YamlLexer.TokenizedLine;
+import jyamlj.YamlLexer.YamlTokenPair;
+import jyamlj.YamlLexer.YamlTokenType;
 
 public abstract class ParsedObject {
 
@@ -37,9 +41,34 @@ public abstract class ParsedObject {
 		return r;
 	}
 
-	protected static ParsedObject parseJsonRoot(final List<TokenPair> input) throws InvalidParserExceptionJson {
+	protected static ParsedObject parseYamlRoot(final ArrayList<TokenizedLine> input)
+			throws InvalidParserExceptionJson {
 		IntWrap i = new IntWrap(0);
-		TokenPair t;
+		if (input.size() == 0) {
+			return new ParsedMap();
+		}
+		int startIndex = 0;
+		TokenizedLine line;
+		for (int j = 0; j < input.size(); j++) {
+			if (input.get(j).tokens.size() != 0) {
+				startIndex = j;
+				break;
+			}
+		}
+		if (startIndex == 0)
+			return new ParsedMap();
+		i.value = startIndex;
+		boolean isMap = true;
+		isMap = !(input.get(startIndex).tokens.get(0).token == jyamlj.YamlLexer.YamlTokenType.Dash);
+		if (isMap)
+			return new ParsedMap(0, input, i);
+		else
+			return new ParsedArray(0, input, i);
+	}
+
+	protected static ParsedObject parseJsonRoot(final List<JsonTokenPair> input) throws InvalidParserExceptionJson {
+		IntWrap i = new IntWrap(0);
+		JsonTokenPair t;
 		t = input.get(i.value);
 		switch (t.token) {
 		case OpenBrace:
@@ -51,8 +80,8 @@ public abstract class ParsedObject {
 		}
 	}
 
-	protected ParsedObject parseJsonCont(final List<TokenPair> input, IntWrap i) throws InvalidParserExceptionJson {
-		TokenPair t;
+	protected ParsedObject parseJsonCont(final List<JsonTokenPair> input, IntWrap i) throws InvalidParserExceptionJson {
+		JsonTokenPair t;
 		t = input.get(i.value);
 		switch (t.token) {
 		case OpenBrace:
@@ -70,9 +99,9 @@ public abstract class ParsedObject {
 		}
 	}
 
-	public static void expectJson(final List<TokenPair> input, IntWrap i, TokenType t)
+	public static void expectJson(final List<JsonTokenPair> input, IntWrap i, JsonTokenType t)
 			throws InvalidParserExceptionJson {
-		TokenType gotten;
+		JsonTokenType gotten;
 		try {
 			gotten = input.get(i.value).token;
 		} catch (IndexOutOfBoundsException e) {
@@ -84,9 +113,9 @@ public abstract class ParsedObject {
 		i.value++;
 	}
 
-	protected static String expectDataJson(final List<TokenPair> input, IntWrap i, TokenType t)
+	protected static String expectDataJson(final List<JsonTokenPair> input, IntWrap i, JsonTokenType t)
 			throws InvalidParserExceptionJson {
-		TokenPair gotten;
+		JsonTokenPair gotten;
 		try {
 			gotten = input.get(i.value);
 		} catch (IndexOutOfBoundsException e) {
@@ -99,9 +128,9 @@ public abstract class ParsedObject {
 		return gotten.data;
 	}
 
-	protected static Boolean peekJson(final List<TokenPair> input, IntWrap i, TokenType t)
+	protected static Boolean peekJson(final List<JsonTokenPair> input, IntWrap i, JsonTokenType t)
 			throws InvalidParserExceptionJson {
-		TokenPair gotten;
+		JsonTokenPair gotten;
 		try {
 			gotten = input.get(i.value);
 		} catch (IndexOutOfBoundsException e) {
@@ -118,16 +147,65 @@ public abstract class ParsedObject {
 		}
 	}
 
+	protected static String expectDataYaml(final TokenizedLine input, YamlTokenType t, int i)
+			throws InvalidParserExceptionYaml {
+		YamlTokenPair gotten;
+		try {
+			gotten = input.tokens.get(i);
+		} catch (IndexOutOfBoundsException e) {
+			throw new InvalidParserExceptionYaml("A paren or bracket is not balenced");
+		}
+		if (gotten.token != t) {
+			throw new InvalidParserExceptionYaml(t, gotten.token);
+		}
+		return gotten.data;
+	}
+
+	public static void expectYaml(final TokenizedLine input, YamlTokenType t, int i) throws InvalidParserExceptionYaml {
+		YamlTokenType gotten;
+		try {
+			gotten = input.tokens.get(i).token;
+		} catch (IndexOutOfBoundsException e) {
+			throw new InvalidParserExceptionYaml("A paren or bracket is not balenced");
+		}
+		if (gotten != t) {
+			throw new InvalidParserExceptionYaml(t, gotten);
+		}
+	}
+
+	protected static Boolean peekYaml(final TokenizedLine input, YamlTokenType t, int i)
+			throws InvalidParserExceptionYaml {
+		YamlTokenPair gotten;
+		try {
+			gotten = input.tokens.get(i);
+		} catch (IndexOutOfBoundsException e) {
+			throw new InvalidParserExceptionYaml("A paren or bracket is not balenced");
+		}
+		return gotten.token == t;
+	}
+
 }
 
 class InvalidParserExceptionJson extends Exception {
 	private static final long serialVersionUID = 1L;
 
-	public InvalidParserExceptionJson(TokenType expected, TokenType found) {
+	public InvalidParserExceptionJson(JsonTokenType expected, JsonTokenType found) {
 		super("Expected: " + expected + ", found: " + found);
 	}
 
 	public InvalidParserExceptionJson(String s) {
+		super(s);
+	}
+}
+
+class InvalidParserExceptionYaml extends Exception {
+	private static final long serialVersionUID = 1L;
+
+	public InvalidParserExceptionYaml(YamlTokenType expected, YamlTokenType found) {
+		super("Expected: " + expected + ", found: " + found);
+	}
+
+	public InvalidParserExceptionYaml(String s) {
 		super(s);
 	}
 }

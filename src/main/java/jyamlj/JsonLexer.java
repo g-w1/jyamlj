@@ -7,11 +7,11 @@ public class JsonLexer {
 		Reg, InStrLit, InNum
 	}
 
-	class TokenPair {
+	class JsonTokenPair {
 		String data;
-		TokenType token;
+		JsonTokenType token;
 
-		public TokenPair(TokenType t, String s) {
+		public JsonTokenPair(JsonTokenType t, String s) {
 			token = t;
 			data = s;
 		}
@@ -25,7 +25,7 @@ public class JsonLexer {
 		}
 	}
 
-	enum TokenType {
+	enum JsonTokenType {
 		OpenBrack, CloseBrack, OpenBrace, CloseBrace, Number, String, Comma, Colon
 	}
 
@@ -35,8 +35,8 @@ public class JsonLexer {
 		tempTokenizingString = new String();
 	}
 
-	public ArrayList<TokenPair> lex(String input) throws InvalidLexerException {
-		ArrayList<TokenPair> tokens = new ArrayList<TokenPair>();
+	public ArrayList<JsonTokenPair> lex(String input) throws InvalidLexerException {
+		ArrayList<JsonTokenPair> tokens = new ArrayList<JsonTokenPair>();
 		State state = State.Reg;
 		Character c;
 		int line = 0, col = 0;
@@ -56,22 +56,22 @@ public class JsonLexer {
 					continue;
 				case '{':
 					// null because we don't have any data
-					tokens.add(new TokenPair(TokenType.OpenBrace, null));
+					tokens.add(new JsonTokenPair(JsonTokenType.OpenBrace, null));
 					continue;
 				case '}':
-					tokens.add(new TokenPair(TokenType.CloseBrace, null));
+					tokens.add(new JsonTokenPair(JsonTokenType.CloseBrace, null));
 					continue;
 				case '[':
-					tokens.add(new TokenPair(TokenType.OpenBrack, null));
+					tokens.add(new JsonTokenPair(JsonTokenType.OpenBrack, null));
 					continue;
 				case ']':
-					tokens.add(new TokenPair(TokenType.CloseBrack, null));
+					tokens.add(new JsonTokenPair(JsonTokenType.CloseBrack, null));
 					continue;
 				case ',':
-					tokens.add(new TokenPair(TokenType.Comma, null));
+					tokens.add(new JsonTokenPair(JsonTokenType.Comma, null));
 					continue;
 				case ':':
-					tokens.add(new TokenPair(TokenType.Colon, null));
+					tokens.add(new JsonTokenPair(JsonTokenType.Colon, null));
 					continue;
 				case '"':
 					state = State.InStrLit;
@@ -87,7 +87,7 @@ public class JsonLexer {
 			}
 			case InStrLit: {
 				if (c == '"') {
-					tokens.add(new TokenPair(TokenType.String, tempTokenizingString));
+					tokens.add(new JsonTokenPair(JsonTokenType.String, tempTokenizingString));
 					tempTokenizingString = new String();
 					state = State.Reg;
 					continue;
@@ -102,7 +102,7 @@ public class JsonLexer {
 				}
 				i -= 1;
 				state = State.Reg;
-				tokens.add(new TokenPair(TokenType.Number, tempTokenizingString));
+				tokens.add(new JsonTokenPair(JsonTokenType.Number, tempTokenizingString));
 				tempTokenizingString = new String();
 				continue;
 			}

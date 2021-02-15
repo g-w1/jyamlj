@@ -3,31 +3,36 @@ package jyamlj;
 import java.util.ArrayList;
 import java.util.List;
 
-import jyamlj.JsonLexer.TokenPair;
-import jyamlj.JsonLexer.TokenType;
+import jyamlj.JsonLexer.JsonTokenPair;
+import jyamlj.JsonLexer.JsonTokenType;
+import jyamlj.YamlLexer.TokenizedLine;
 
 public class ParsedArray extends ParsedObject {
 
 	public List<ParsedObject> arr;
 
-	public ParsedArray(int indentLevel, List<TokenPair> input, IntWrap i) throws InvalidParserExceptionJson {
+	public ParsedArray(int indentLevel, List<JsonTokenPair> input, IntWrap i) throws InvalidParserExceptionJson {
 		super(indentLevel);
 		arr = new ArrayList<ParsedObject>();
-		expectJson(input, i, TokenType.OpenBrack);
-		if (peekJson(input, i, TokenType.CloseBrack)) {
+		expectJson(input, i, JsonTokenType.OpenBrack);
+		if (peekJson(input, i, JsonTokenType.CloseBrack)) {
 			i.value++;
 			return;
 		}
-		while (input.get(i.value).token != TokenType.CloseBrack) {
+		while (input.get(i.value).token != JsonTokenType.CloseBrack) {
 			ParsedObject val = parseJsonCont(input, i);
 			arr.add(val);
-			if (peekJson(input, i, TokenType.CloseBrack)) {
-				expectJson(input, i, TokenType.CloseBrack);
+			if (peekJson(input, i, JsonTokenType.CloseBrack)) {
+				expectJson(input, i, JsonTokenType.CloseBrack);
 				return;
 			}
-			expectJson(input, i, TokenType.Comma);
+			expectJson(input, i, JsonTokenType.Comma);
 		}
 		return;
+	}
+
+	public ParsedArray(int indentLevel, ArrayList<TokenizedLine> input, IntWrap i) {
+		super(indentLevel);
 	}
 
 	public String toJsonString() {

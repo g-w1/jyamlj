@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import jyamlj.JsonLexer.TokenPair;
+import jyamlj.JsonLexer.JsonTokenPair;
 
 public class AppTest {
 	@Test
@@ -57,7 +57,7 @@ public class AppTest {
 	private void assertJsonFormat(String input, String expectedOutput)
 			throws InvalidLexerException, InvalidParserExceptionJson {
 		JsonLexer lexer = new JsonLexer();
-		ArrayList<TokenPair> ts = lexer.lex(input);
+		ArrayList<JsonTokenPair> ts = lexer.lex(input);
 		ParsedObject o = ParsedObject.parseJsonRoot(ts);
 		String output = o.toString(true);
 		assertEquals(output, expectedOutput);
@@ -66,7 +66,7 @@ public class AppTest {
 	private void assertReflectiveJsonFormat(String inputString)
 			throws InvalidLexerException, InvalidParserExceptionJson {
 		JsonLexer lexer = new JsonLexer();
-		ArrayList<TokenPair> ts = lexer.lex(inputString);
+		ArrayList<JsonTokenPair> ts = lexer.lex(inputString);
 		ParsedObject o1 = ParsedObject.parseJsonRoot(ts);
 		String output1 = o1.toString(true);
 		lexer = new JsonLexer();
