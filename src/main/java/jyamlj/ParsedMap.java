@@ -5,7 +5,6 @@ import java.util.List;
 
 import jyamlj.JsonLexer.JsonTokenPair;
 import jyamlj.JsonLexer.JsonTokenType;
-import jyamlj.YamlLexer.TokenizedLine;
 
 public class ParsedMap extends ParsedObject {
 
@@ -33,11 +32,6 @@ public class ParsedMap extends ParsedObject {
 			}
 			expectJson(input, i, JsonTokenType.Comma);
 		}
-	}
-
-	public ParsedMap(int indentLevel, /* TODO kinda hack but who cares XD */ ArrayList<TokenizedLine> input, IntWrap i)
-			throws InvalidParserExceptionJson {
-		super(indentLevel);
 	}
 
 	class MapPair {

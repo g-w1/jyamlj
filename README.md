@@ -1,16 +1,14 @@
 # jyamlj
 
-Convert from json to yaml and back.
+Convert from json to yaml/json.
 
-Useful if you dont like yaml and like json.
+Useful if you dont understand yaml and dont but like json.
 
 TODO:
 
 * [x] json lexer
 * [x] json parser
 * [x] json renderer
-* [x] yaml lexer
-* [ ] yaml parser
 * [x] yaml renderer
-* [ ] tests
-* [ ] publish!
+* [x] tests
+* [ ] publish/cli!

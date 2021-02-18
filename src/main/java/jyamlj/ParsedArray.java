@@ -5,7 +5,6 @@ import java.util.List;
 
 import jyamlj.JsonLexer.JsonTokenPair;
 import jyamlj.JsonLexer.JsonTokenType;
-import jyamlj.YamlLexer.TokenizedLine;
 
 public class ParsedArray extends ParsedObject {
 
@@ -29,10 +28,6 @@ public class ParsedArray extends ParsedObject {
 			expectJson(input, i, JsonTokenType.Comma);
 		}
 		return;
-	}
-
-	public ParsedArray(int indentLevel, ArrayList<TokenizedLine> input, IntWrap i) {
-		super(indentLevel);
 	}
 
 	public String toJsonString() {

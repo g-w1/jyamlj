@@ -5,9 +5,6 @@ import java.util.List;
 
 import jyamlj.JsonLexer.JsonTokenPair;
 import jyamlj.JsonLexer.JsonTokenType;
-import jyamlj.YamlLexer.TokenizedLine;
-import jyamlj.YamlLexer.YamlTokenPair;
-import jyamlj.YamlLexer.YamlTokenType;
 
 public abstract class ParsedObject {
 
@@ -39,31 +36,6 @@ public abstract class ParsedObject {
 		}
 		r += s;
 		return r;
-	}
-
-	protected static ParsedObject parseYamlRoot(final ArrayList<TokenizedLine> input)
-			throws InvalidParserExceptionJson {
-		IntWrap i = new IntWrap(0);
-		if (input.size() == 0) {
-			return new ParsedMap();
-		}
-		int startIndex = 0;
-		TokenizedLine line;
-		for (int j = 0; j < input.size(); j++) {
-			if (input.get(j).tokens.size() != 0) {
-				startIndex = j;
-				break;
-			}
-		}
-		if (startIndex == 0)
-			return new ParsedMap();
-		i.value = startIndex;
-		boolean isMap = true;
-		isMap = !(input.get(startIndex).tokens.get(0).token == jyamlj.YamlLexer.YamlTokenType.Dash);
-		if (isMap)
-			return new ParsedMap(0, input, i);
-		else
-			return new ParsedArray(0, input, i);
 	}
 
 	protected static ParsedObject parseJsonRoot(final List<JsonTokenPair> input) throws InvalidParserExceptionJson {
@@ -146,44 +118,6 @@ public abstract class ParsedObject {
 			return this.toYamlString();
 		}
 	}
-
-	protected static String expectDataYaml(final TokenizedLine input, YamlTokenType t, int i)
-			throws InvalidParserExceptionYaml {
-		YamlTokenPair gotten;
-		try {
-			gotten = input.tokens.get(i);
-		} catch (IndexOutOfBoundsException e) {
-			throw new InvalidParserExceptionYaml("A paren or bracket is not balenced");
-		}
-		if (gotten.token != t) {
-			throw new InvalidParserExceptionYaml(t, gotten.token);
-		}
-		return gotten.data;
-	}
-
-	public static void expectYaml(final TokenizedLine input, YamlTokenType t, int i) throws InvalidParserExceptionYaml {
-		YamlTokenType gotten;
-		try {
-			gotten = input.tokens.get(i).token;
-		} catch (IndexOutOfBoundsException e) {
-			throw new InvalidParserExceptionYaml("A paren or bracket is not balenced");
-		}
-		if (gotten != t) {
-			throw new InvalidParserExceptionYaml(t, gotten);
-		}
-	}
-
-	protected static Boolean peekYaml(final TokenizedLine input, YamlTokenType t, int i)
-			throws InvalidParserExceptionYaml {
-		YamlTokenPair gotten;
-		try {
-			gotten = input.tokens.get(i);
-		} catch (IndexOutOfBoundsException e) {
-			throw new InvalidParserExceptionYaml("A paren or bracket is not balenced");
-		}
-		return gotten.token == t;
-	}
-
 }
 
 class InvalidParserExceptionJson extends Exception {
@@ -194,18 +128,6 @@ class InvalidParserExceptionJson extends Exception {
 	}
 
 	public InvalidParserExceptionJson(String s) {
-		super(s);
-	}
-}
-
-class InvalidParserExceptionYaml extends Exception {
-	private static final long serialVersionUID = 1L;
-
-	public InvalidParserExceptionYaml(YamlTokenType expected, YamlTokenType found) {
-		super("Expected: " + expected + ", found: " + found);
-	}
-
-	public InvalidParserExceptionYaml(String s) {
 		super(s);
 	}
 }

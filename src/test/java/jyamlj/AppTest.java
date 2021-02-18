@@ -47,7 +47,27 @@ public class AppTest {
 "	}\n" + 
 "]");
 			assertReflectiveJsonFormat("{ \"a\": {\"b\": 2}}");
-			
+			assertYamlFormat(
+"[{\"jeff\":\"test\", \"jacob\":[1,2, 3, {\"a\": 1.1, \"b\":5}, [1,2,3]], \"thing\":[1,5.1,[{}]]}]",
+"- \n"+
+"	jeff: test\n"+
+"	jacob: \n"+
+"		- 1\n"+
+"		- 2\n"+
+"		- 3\n"+
+"		- \n"+
+"			a: 1.1\n"+
+"			b: 5\n"+
+"		- \n"+
+"			- 1\n"+
+"			- 2\n"+
+"			- 3\n"+
+"	thing: \n"+
+"		- 1\n"+
+"		- 5.1\n"+
+"		- \n"+
+"			- {}"
+        );
 			// @formatter:on
 		} catch (InvalidLexerException | InvalidParserExceptionJson e) {
 			fail("WE HAVE AN ERROR: " + e);
@@ -60,6 +80,14 @@ public class AppTest {
 		ArrayList<JsonTokenPair> ts = lexer.lex(input);
 		ParsedObject o = ParsedObject.parseJsonRoot(ts);
 		String output = o.toString(true);
+		assertEquals(output, expectedOutput);
+	}
+	private void assertYamlFormat(String input, String expectedOutput)
+			throws InvalidLexerException, InvalidParserExceptionJson {
+		JsonLexer lexer = new JsonLexer();
+		ArrayList<JsonTokenPair> ts = lexer.lex(input);
+		ParsedObject o = ParsedObject.parseJsonRoot(ts);
+		String output = o.toString(false);
 		assertEquals(output, expectedOutput);
 	}
 
