@@ -1,2 +1,13 @@
+arguments=
+auto.sync=false
+build.scans.enabled=false
+connection.gradle.distribution=GRADLE_DISTRIBUTION(WRAPPER)
 connection.project.dir=
 eclipse.preferences.version=1
+gradle.user.home=
+java.home=/nix/store/3g6w1xh0646h0wp61v54swnxghsl43xn-adoptopenjdk-hotspot-bin-11.0.7
+jvm.arguments=
+offline.mode=false
+override.workspace.settings=true
+show.console.view=true
+show.executions.view=true

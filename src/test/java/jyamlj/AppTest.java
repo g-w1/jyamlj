@@ -19,7 +19,7 @@ public class AppTest {
 		try {
 			assertJsonFormat(
 					"[{\"jeff\":\"test\", \"jacob\":[1,2, 3, {\"a\": 1.1, \"b\":5}, [1,2,3]], \"thing\":[1,5.1,[{}]]}]",
-"[\n" + 
+"[\n" +
 "	{\n" + 
 "		\"jeff\": \"test\",\n" + 
 "		\"jacob\": [\n" + 
@@ -82,6 +82,7 @@ public class AppTest {
 		String output = o.toString(true);
 		assertEquals(output, expectedOutput);
 	}
+
 	private void assertYamlFormat(String input, String expectedOutput)
 			throws InvalidLexerException, InvalidParserExceptionJson {
 		JsonLexer lexer = new JsonLexer();
